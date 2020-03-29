@@ -1,0 +1,49 @@
+@startuml(id=SystemContext)
+scale max 2000x2000
+title Platforma bankowości online - System Context
+caption Diagram kontekstowy systemu bankowego
+
+skinparam {
+  shadowing false
+  arrowColor #707070
+  actorBorderColor #707070
+  componentBorderColor #707070
+  rectangleBorderColor #707070
+  noteBackgroundColor #ffffff
+  noteBorderColor #707070
+  rectangleFontColor #ffffff
+  rectangleStereotypeFontColor #ffffff
+}
+actor "Klient indywidualny" <<Person>> as 1 #08427b
+note right of 1
+  Klient banku, posiada konta
+  bankowe z numerami
+end note
+package "Bankowość korporacyjna" {
+  rectangle 4 <<Software System>> #1168bd [
+    E-mail System
+    --
+    System e-mailowy Microsoft
+    Exchange
+  ]
+  rectangle 2 <<Software System>> #1168bd [
+    Platforma bankowości online
+    --
+    Pozwala na przeglądanie stanu
+    konta i dokonywanie
+    transakcji
+  ]
+  rectangle 3 <<Software System>> #1168bd [
+    System bankowy Mainframe
+    --
+    Core'owy system bankowy.
+    Zawiera informacje o
+    klientach, transakcjach,
+    kontach, etc.
+  ]
+}
+4 .[#707070].> 1 : Wysyła e-maile do
+1 .[#707070].> 2 : Używa
+2 .[#707070].> 4 : Pobiera informacje/Wysyła informacje
+2 .[#707070].> 3 : <<XML/HTTPS>>\nPobiera informacje/Wysyła informacje
+@enduml

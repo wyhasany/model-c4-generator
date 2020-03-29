@@ -1,0 +1,64 @@
+@startuml(id=Containers)
+scale max 2000x2000
+title Platforma bankowości online - Containers
+caption Diagram kontenerów systemu Platformy Bankowości Online
+
+skinparam {
+  shadowing false
+  arrowColor #707070
+  actorBorderColor #707070
+  componentBorderColor #707070
+  rectangleBorderColor #707070
+  noteBackgroundColor #ffffff
+  noteBorderColor #707070
+  rectangleFontColor #ffffff
+  rectangleStereotypeFontColor #ffffff
+}
+rectangle 4 <<Software System>> #1168bd [
+  E-mail System
+  --
+  System e-mailowy Microsoft
+  Exchange
+]
+actor "Klient indywidualny" <<Person>> as 1 #08427b
+note right of 1
+  Klient banku, posiada konta
+  bankowe z numerami
+end note
+rectangle 3 <<Software System>> #1168bd [
+  System bankowy Mainframe
+  --
+  Core'owy system bankowy.
+  Zawiera informacje o
+  klientach, transakcjach,
+  kontach, etc.
+]
+package "Platforma bankowości online" <<Software System>> {
+  rectangle 10 <<Container>> #bbbbbb [
+    API
+    --
+    Dostarcza funkcjonalność
+    bankowości online poprzez
+    JSON/HTTPS API.
+  ]
+  rectangle 9 <<Container>> #bbbbbb [
+    Aplikacja mobilna
+    --
+    Dostarcza ograniczoną
+    funkcjonalność bankowości
+    online dla klientów
+  ]
+  database 11 <<Container>> #1168bd [
+    Baza danych
+    --
+    Informacje o klientach,
+    hashowane hasła, logi etc
+  ]
+}
+10 .[#707070].> 11 : <<JDBC>>\nCzyta/Zapisuje
+10 .[#707070].> 4 : <<SMTP>>\nWysyła maile
+10 .[#707070].> 3 : <<XML/HTTPS>>\nUżywa
+9 .[#707070].> 10 : <<JSON/HTTPS>>\nUżywa
+4 .[#707070].> 1 : Wysyła e-maile do
+1 .[#707070].> 9 : Używa
+@enduml
