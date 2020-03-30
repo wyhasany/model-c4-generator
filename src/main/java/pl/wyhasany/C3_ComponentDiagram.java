@@ -2,6 +2,7 @@ package pl.wyhasany;
 
 import com.structurizr.model.Component;
 import com.structurizr.model.Container;
+import com.structurizr.model.Relationship;
 import com.structurizr.view.ComponentView;
 import com.structurizr.view.PaperSize;
 import com.structurizr.view.View;
@@ -9,6 +10,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Value;
 
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.C4_LAYOUT_DIRECTION;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.C4_LAYOUT_MODE;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Down;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Left;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.RelationshipModes.Lay;
 
 @Value
 class C3_ComponentDiagram implements Diagram {
@@ -96,6 +102,10 @@ class C3_ComponentDiagram implements Diagram {
         emailComponent.uses(c2ContainerDiagram.c1ContextDiagram().emailSystem(), "Używa", "XML/HTTPS");
         signinController.uses(securityComponent, "Używa", "SYNC");
         securityComponent.uses(c2ContainerDiagram.database(), "Czyta i zapisuje do", "JDBC");
+        //Layout
+        Relationship layout = resetPasswordController.uses(accountsSummaryController, "");
+        layout.addProperty(C4_LAYOUT_MODE, Lay.name());
+        layout.addProperty(C4_LAYOUT_DIRECTION, Left.name());
     }
 
     @Override

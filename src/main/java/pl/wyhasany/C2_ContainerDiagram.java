@@ -1,13 +1,26 @@
 package pl.wyhasany;
 
+import com.structurizr.io.plantuml.C4PlantUMLWriter;
+import com.structurizr.io.plantuml.C4PlantUMLWriter.RelationshipModes;
+import com.structurizr.io.plantuml.C4PlantUMLWriter.Type;
 import com.structurizr.model.Container;
 import com.structurizr.model.Person;
+import com.structurizr.model.Relationship;
 import com.structurizr.model.SoftwareSystem;
 import com.structurizr.view.ContainerView;
 import com.structurizr.view.View;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.C4_ELEMENT_TYPE;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.C4_LAYOUT_DIRECTION;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.C4_LAYOUT_MODE;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Down;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Left;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Right;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Up;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.RelationshipModes.Lay;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Type.Db;
 import static pl.wyhasany.StructurizrTags.DATABASE_TAG;
 
 @Value
@@ -43,6 +56,7 @@ class C2_ContainerDiagram implements Diagram {
             "Informacje o klientach, hashowane hasła, logi etc",
             "Kontener: Relacyjna baza danych"
         );
+        database.addProperty(C4_ELEMENT_TYPE, Db.name());
         database.addTags(DATABASE_TAG);
         return database;
     }
@@ -64,11 +78,20 @@ class C2_ContainerDiagram implements Diagram {
     }
 
     private void interactions(Person customer, SoftwareSystem mainframeBankingSystem, SoftwareSystem emailSystem) {
-        customer.uses(mobileApp, "Używa", "");
-        apiApplication.uses(database, "Czyta/Zapisuje", "JDBC");
-        apiApplication.uses(mainframeBankingSystem, "Używa", "XML/HTTPS");
-        mobileApp.uses(apiApplication, "Używa", "JSON/HTTPS");
-        apiApplication.uses(emailSystem, "Wysyła maile", "SMTP");
+        customer.uses(mobileApp, "Używa", "")
+            .addProperty(C4_LAYOUT_DIRECTION, Right.name());
+        apiApplication.uses(database, "Czyta/Zapisuje", "JDBC")
+            .addProperty(C4_LAYOUT_DIRECTION, Down.name());
+        apiApplication.uses(mainframeBankingSystem, "Używa", "XML/HTTPS")
+            .addProperty(C4_LAYOUT_DIRECTION, Down.name());
+        mobileApp.uses(apiApplication, "Używa", "JSON/HTTPS")
+            .addProperty(C4_LAYOUT_DIRECTION, Down.name());
+        apiApplication.uses(emailSystem, "Wysyła maile", "SMTP")
+            .addProperty(C4_LAYOUT_DIRECTION, Left.name());
+        //Layout
+        Relationship layout = emailSystem.uses(mainframeBankingSystem, "");
+        layout.addProperty(C4_LAYOUT_MODE, Lay.name());
+        layout.addProperty(C4_LAYOUT_DIRECTION, Down.name());
     }
 
     @Override

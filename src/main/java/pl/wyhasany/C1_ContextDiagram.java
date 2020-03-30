@@ -1,5 +1,7 @@
 package pl.wyhasany;
 
+import com.structurizr.io.plantuml.C4PlantUMLWriter;
+import com.structurizr.io.plantuml.C4PlantUMLWriter.Directions;
 import com.structurizr.model.Location;
 import com.structurizr.model.Model;
 import com.structurizr.model.Person;
@@ -8,6 +10,12 @@ import com.structurizr.view.SystemContextView;
 import com.structurizr.view.View;
 import lombok.Value;
 import lombok.experimental.Accessors;
+
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.C4_LAYOUT_DIRECTION;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Down;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Left;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Right;
+import static com.structurizr.io.plantuml.C4PlantUMLWriter.Directions.Up;
 
 @Value
 @Accessors(fluent = true)
@@ -66,23 +74,23 @@ class C1_ContextDiagram implements Diagram {
         customer.uses(
             internetBankingSystem,
             "Używa"
-        );
+        ).addProperty(C4_LAYOUT_DIRECTION, Down.name());
 
         internetBankingSystem.uses(
             mainframeBankingSystem,
             "Pobiera informacje/Wysyła informacje",
             "XML/HTTPS"
-        );
+        ).addProperty(C4_LAYOUT_DIRECTION, Left.name());
 
         internetBankingSystem.uses(
             emailSystem,
             "Pobiera informacje/Wysyła informacje"
-        );
+        ).addProperty(C4_LAYOUT_DIRECTION, Right.name());
 
         emailSystem.delivers(
             customer,
             "Wysyła e-maile do"
-        );
+        ).addProperty(C4_LAYOUT_DIRECTION, Up.name());
     }
 
     @Override
