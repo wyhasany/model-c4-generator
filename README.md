@@ -13,6 +13,10 @@ Run following command to generate `.png` charts in `img/` directory:
 ./gradlew plantUml
 ```
 
+#### Requirements
+
+* [Graphviz](https://www.graphviz.org/download/) (may be needed for rendering certain diagrams, use a version defined [here](http://plantuml.com/graphviz-dot))
+
 Look at:
 * c1.puml
 
