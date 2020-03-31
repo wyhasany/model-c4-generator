@@ -3,9 +3,14 @@
 There is a skeleton project showing how to model C4 in Java with PlantUML 
 excluding website. It follows OOP approach in place of  structural files.
 
-Run following command to generate charts:
+Run following command to generate `.puml` charts:
 ```sh
 ./gradlew run
+```
+
+Run following command to generate `.png` charts in `img/` directory:
+```sh
+./gradlew plantUml
 ```
 
 Look at:
