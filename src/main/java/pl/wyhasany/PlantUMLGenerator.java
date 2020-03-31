@@ -3,6 +3,7 @@ package pl.wyhasany;
 import com.structurizr.io.plantuml.C4PlantUMLWriter;
 import com.structurizr.io.plantuml.C4PlantUMLWriter.RelationshipModes;
 import com.structurizr.io.plantuml.PlantUMLWriter;
+import com.structurizr.model.Element;
 import com.structurizr.model.Model;
 import com.structurizr.model.Relationship;
 import com.structurizr.view.RelationshipView;
@@ -47,24 +48,46 @@ class PlantUMLGenerator {
 
     private void removeLayouts() {
         try {
-            Model model = organization.model();
-            Class<? extends Model> modelClass = model.getClass();
-            Field relationshipsByIdField = modelClass.getDeclaredField("relationshipsById");
-            relationshipsByIdField.setAccessible(true);
-            Map<String, Relationship> relationshipViews = (Map<String, Relationship>)relationshipsByIdField.get(model);
-            List<String> keysOfLayoutsRelations = relationshipViews.entrySet().stream()
-                .filter(entry -> {
-                    Relationship value = entry.getValue();
-                    Map<String, String> properties = value.getProperties();
-                    String layout = properties.get(C4_LAYOUT_MODE);
-                    return Lay.name().equals(layout);
-                })
-                .map(Entry::getKey)
-                .collect(Collectors.toList());
-            keysOfLayoutsRelations.forEach(relationshipViews::remove);
+            removeLayoutsFromModel();
+            removeLayoutRelationshipsPerElement();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void removeLayoutRelationshipsPerElement() throws NoSuchFieldException, IllegalAccessException {
+        Model model = organization.model();
+        Set<Element> elements = model.getElements();
+        for (Element element : elements) {
+            for (Relationship relationship : element.getRelationships()) {
+                String layoutMode = relationship.getProperties().get(C4_LAYOUT_MODE);
+                if (Lay.name().equals(layoutMode)) {
+                    Class<? extends Element> elementClass = Element.class;
+                    Field relationshipsField = elementClass.getDeclaredField("relationships");
+                    relationshipsField.setAccessible(true);
+                    Set<Relationship> relationships = (Set<Relationship>) relationshipsField.get(element);
+                    relationships.remove(relationship);
+                }
+            }
+        }
+    }
+
+    private void removeLayoutsFromModel() throws NoSuchFieldException, IllegalAccessException {
+        Model model = organization.model();
+        Class<? extends Model> modelClass = model.getClass();
+        Field relationshipsByIdField = modelClass.getDeclaredField("relationshipsById");
+        relationshipsByIdField.setAccessible(true);
+        Map<String, Relationship> relationshipViews = (Map<String, Relationship>)relationshipsByIdField.get(model);
+        List<String> keysOfLayoutsRelations = relationshipViews.entrySet().stream()
+            .filter(entry -> {
+                Relationship value = entry.getValue();
+                Map<String, String> properties = value.getProperties();
+                String layout = properties.get(C4_LAYOUT_MODE);
+                return Lay.name().equals(layout);
+            })
+            .map(Entry::getKey)
+            .collect(Collectors.toList());
+        keysOfLayoutsRelations.forEach(relationshipViews::remove);
     }
 
     private void addLegend(String fileName) throws IOException {
